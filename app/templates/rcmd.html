@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block content_header %}
+<h1>网易音乐歌曲推荐</h1>
+{% endblock %}
+
+{% block content_container %}
+<div class="row">
+    {% for song in data %}
+    <div class="col-sm-0 col-md-4">
+         <div class="thumbnail">
+            <a href="http://music.163.com/#/song?id={{song['id']}}" width="640" height="640"><img src={{song['cover']}} alt={{song['name']}}></a>
+            <div class="caption" contenteditable="true">
+                <h3>{{song['name']}}</h3>
+                <a href="http://music.163.com/#/{{song['artist']['url']}}"><p>{{song['artist']['name']}}</p></a>
+                <p>{{song['total']}}</p>
+                <p><a  href="/song/{{song['id']}}" alt={{song['hotComments'][0]['content']}}>{{song['hotComments'][0]['content'][0:20]}}...</a></p>
+            </div>
+         </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{% endblock %}
+
+
+

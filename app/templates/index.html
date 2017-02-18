@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Flasky - Welcome{% endblock %}
+
+{% block content_header %}
+<p>The local date and time is {{ moment(current_time).format('LLL') }}.</P>
+<p>That was {{ moment(current_time).fromNow(refresh=True) }}.</P>
+<h1>Hello, {% if current_user.is_authenticated %}{{current_user.username}}{% else %}Stranger{% endif %}!</h1>
+{% if not konw %}
+<p>Pleased to meet you!</p>
+{% else %}
+<p>Happy to see you again!</P>
+{% endif %}
+{% endblock %}
+
+{% block content_container %}
+{% if name %}{{ wtf.quick_form(form) }}{% endif %}
+{% endblock %}
