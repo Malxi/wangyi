@@ -16,12 +16,12 @@
     {% for song in data %}
     <div class="col-sm-0 col-md-4">
          <div class="thumbnail">
-            <a href="http://music.163.com/#/song?id={{song['id']}}" width="640" height="640"><img src={{song['cover']}} alt={{song['name']}}></a>
-            <div class="caption" contenteditable="true">
+            <a href="http://music.163.com/#/song?id={{song['id']}}"><img src={{song['cover']}} alt={{song['name']}} width="480" height="480"></a>
+            <div class="caption" >
                 <h3>{{song['name']}}</h3>
                 <a href="http://music.163.com/#/{{song['artist']['url']}}"><p>{{song['artist']['name']}}</p></a>
-                <p>{{song['total']}}</p>
-                <p><a  href="/song/{{song['id']}}" alt={{song['hotComments'][0]['content']}}>{{song['hotComments'][0]['content'][0:20]}}...</a></p>
+                <p>{{song['total']}}</p>    
+                <a  href="/song/{{song['id']}}" alt={{song['hotComments'][0]['content']}}><p style="overflow:hidden;text-overflow:ellipsis;white-space: nowrap; ">{{song['hotComments'][0]['content']}}</p></a>
             </div>
          </div>
     </div>

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block head %}
+{{ super() }}
+<script src="{{ url_for('static', filename = 'echarts.min.js') }}"></script>
+<script src="{{ url_for('static', filename = 'jquery-2.2.4.js') }}"></script>
+<script src="{{ url_for('static', filename = 'dataTool.min.js') }}"></script>
+{% endblock %}
+
+{% block content_header %}
+<h1>top100歌曲类型关系图</h1>
+{% endblock %}
+
+{% block content_container %}
+<!-- 调整宽高去适应页面，这个大小正好适合我的电脑而已... -->
+<div id="main"  style="width: 960px;height:720px;"></div>
+<script type="text/javascript">
+    var dom = document.getElementById("main");
+    var myChart = echarts.init(dom);
+    myChart.showLoading();
+    $.get("{{ url_for('static', filename = 'songs.gexf') }}", function (xml) {
+          myChart.hideLoading();
+          var graph = echarts.dataTool.gexf.parse(xml);
+          //图例
+          var categories = [];
+          for (var i = 0; i < 10; i++) {
+                categories[i] = {
+                    name: '系列' + i
+                };
+          }
+          graph.nodes.forEach(function (node) {
+                node.itemStyle = null;
+                node.value = node.symbolSize;
+                node.label = {
+                    normal: {
+                        show: true//node.symbolSize > 30
+                    }
+                };
+                node.category = node.attributes.modularity_class;
+          });
+          option = {
+                title: {
+                    text: 'Les Miserables',
+                    subtext: 'Default layout',
+                    top: 'bottom',
+                    left: 'right'
+                },
+                legend: [{
+                    data: categories.map(function (a) {
+                        return a.name;
+                    })
+                }],
+                animationDuration: 1500,
+                animationEasingUpdate: 'quinticInOut',
+                series : [
+                    {
+                        name: 'Les Miserables',
+                        type: 'graph',
+                        layout: 'none',
+                        data: graph.nodes,
+                        links: graph.links,
+                        categories: categories,
+                        roam: true,
+                        label: {
+                            normal: {
+                                position: 'right',
+                                formatter: '{b}'
+                            }
+                        },
+                        lineStyle: {
+                            normal: {
+                                color: 'source',
+                                curveness: 0.3
+                            }
+                        }
+                    }
+                ]
+          };
+          myChart.setOption(option);
+          }, 'xml');
+</script>
+{% endblock %}

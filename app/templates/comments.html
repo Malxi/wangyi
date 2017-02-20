@@ -13,15 +13,20 @@
     <h3><a href="http://music.163.com/#/{{data['artist']['url']}}">{{data['artist']['name']}}</a></h3>
 </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading"><h3>热门评论</h3></div>
+<div class="comment_box">
+    <p><hr></P>
     {% for comment in data['hotComments'] %}
-     <ul class="list-group">
-        <li class="list-group-item">
-            <img src={{comment['user']['avatarUrl']}} width="48" height="48" >
-            <h3 class="panel-title">{{comment['user']['nickname']}} : {{comment['content']}}</h3>
-        </li>
-    </ul>
+    <div class="row">
+        <div class="col-xs-1"><a href="http://music.163.com/#/user/home?id={{comment['user']['userId']}}">
+            <img src={{comment['user']['avatarUrl']}} width="64" height="64" ></a>
+        </div>
+        <div class="col-xs-11">
+            <a href="http://music.163.com/#/user/home?id={{comment['user']['userId']}}"><h6>{{comment['user']['nickname']}}:</h6></a>
+            <p>{{comment['content']}}</p>
+            <small>{{ moment(comment['time']).format('YYYY年M月D日 h:mm:ss a') }}</small>
+        </div>
+    </div>
+    <p><hr></P>
     {% endfor %}
 </div>
 {% endblock %}

@@ -23,5 +23,5 @@ manager.add_command('db', MigrateCommand)
 #    unittest.TextTestRunner(verbosity=2).run(tests)
 
 if __name__ == '__main__':
-    manager.run()
-#    app.run(debug=True)
+    #manager.run()
+    app.run(debug=True, host="192.168.0.103", port=80)

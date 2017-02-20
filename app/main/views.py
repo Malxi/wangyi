@@ -7,6 +7,7 @@ from ..models import User
 from ..email import send_email
 from .. import mongo
 import random
+import datetime
 
 '''
 @main.route('/', methods=['GET', 'POST'])
@@ -28,12 +29,21 @@ def index():
     return render_template('index.html', form=form,name=session.get('name'), known=session.get('know', False), current_time=datetime.utcnow())
 '''
 
-@main.route('/')
-def home_page():
+@main.route('/rcmd')
+def rcmd_page():
     topSongsList = mongo.db.topSongs.find_one()['topSongs']
     data = random.sample(topSongsList, 24)
     return render_template('rcmd.html', data = data)
 
+@main.route('/')
+def home_page():
+    return render_template('relationship.html')    
+    
+@main.route('/sort/topSongs')
+def sort_page():
+    topSongsList = mongo.db.topSongs.find_one()['topSongs']
+    return render_template('sort.html', data = topSongsList)
+    
 @main.route('/data/<value>')
 def data_page(value):
     cur = mongo.db.CommentsData.find_one({'id' : value})
@@ -42,6 +52,10 @@ def data_page(value):
 @main.route('/song/<id>')
 def comments_page(id):
     song_data = mongo.db.comments.find_one({'id' : id})
+    for comment in song_data['hotComments']:
+        timeStamp = str(comment['time'])[0:10]
+        #print timeStamp
+        comment['time'] = datetime.datetime.fromtimestamp(int(timeStamp)) 
     return render_template('comments.html', data=song_data)
        
 '''
