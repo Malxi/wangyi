@@ -9,40 +9,27 @@ from .. import mongo
 import random
 import datetime
 
-'''
-@main.route('/', methods=['GET', 'POST'])
-def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.name.data).first()
-        if user is None:
-            user = User(username=form.name.data)
-            db.session.add(user)
-            session['know'] = False
-            if current_app.config['FLASK_ADMIN']:
-                send_email(current_app.config['FLASK_ADMIN'], 'New user', 'mail/new_user', user=user)
-        else:
-            session['know'] = True
-        session['name'] = form.name.data
-        form.name.data=''
-        return redirect(url_for('.index'))
-    return render_template('index.html', form=form,name=session.get('name'), known=session.get('know', False), current_time=datetime.utcnow())
-'''
 
 @main.route('/rcmd')
 def rcmd_page():
-    topSongsList = mongo.db.topSongs.find_one()['topSongs']
+    topSongsList = mongo.db.sortData.find_one({'tableName' : 'topSongs'})['data']
     data = random.sample(topSongsList, 24)
     return render_template('rcmd.html', data = data)
 
 @main.route('/')
 def home_page():
     return render_template('relationship.html')    
+        
     
-@main.route('/sort/topSongs')
-def sort_page():
-    topSongsList = mongo.db.topSongs.find_one()['topSongs']
-    return render_template('sort.html', data = topSongsList)
+@main.route('/sort/<value>')
+def sortSongs_page(value):
+    data = mongo.db.sortData.find_one({'tableName' : value})['data'][0:100]
+    if value == 'topComments':
+        for comment in data:
+            timeStamp = str(comment['time'])[0:10]
+            #print timeStamp
+            comment['time'] = datetime.datetime.fromtimestamp(int(timeStamp))
+    return render_template( value + '.html', data = data)
     
 @main.route('/data/<value>')
 def data_page(value):
@@ -51,19 +38,9 @@ def data_page(value):
 
 @main.route('/song/<id>')
 def comments_page(id):
-    song_data = mongo.db.comments.find_one({'id' : id})
+    song_data = mongo.db.sComments.find_one({'id' : id})
     for comment in song_data['hotComments']:
         timeStamp = str(comment['time'])[0:10]
         #print timeStamp
         comment['time'] = datetime.datetime.fromtimestamp(int(timeStamp)) 
     return render_template('comments.html', data=song_data)
-       
-'''
-@main.route('/user/<name>')
-def user(name):
-    return render_template('user.html',name=name)
-
-@main.route('/config')
-def test():
-    return str(current_app.config['FLASK_ADMIN'])
-'''

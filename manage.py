@@ -24,4 +24,4 @@ manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
     #manager.run()
-    app.run(debug=True, host="192.168.0.103", port=80)
+    app.run(debug=True, host="0.0.0.0", port=80)
