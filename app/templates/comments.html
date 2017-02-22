@@ -22,8 +22,8 @@
             <small>赞: {{comment['likedCount']}}</small>
         </div>
         <div class="col-xs-9 col-md-11">
-            <a href="http://music.163.com/#/user/home?id={{comment['user']['userId']}}"><h6>{{comment['user']['nickname']}}:</h6></a>
-            <p>{{comment['content']}}</p>
+            <a href="http://music.163.com/#/user/home?id={{comment['user']['userId']}}">{{comment['user']['nickname']}}:</a>
+            <p></br>{{comment['content']}}</p>
             <small>{{ moment(comment['time']).format('YYYY年M月D日 h:mm:ss a') }}</small></br>
             
         </div>

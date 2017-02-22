@@ -1,27 +1,28 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Welcome{% endblock %}
+{% block title %}网易云音乐数据分析{% endblock %}
 
 {% block head %}
 {{ super() }}
-<script src="{{ url_for('static', filename = 'echarts.min.js') }}"></script>
-<script src="{{ url_for('static', filename = 'jquery-2.2.4.js') }}"></script>
-<script src="{{ url_for('static', filename = 'dataTool.min.js') }}"></script>
+    <meta charset="utf-8">
+    <script src="{{ url_for('static', filename = 'echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'jquery-2.2.4.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'dataTool.min.js') }}"></script>
 {% endblock %}
 
 {% block content_header %}
-<h1>top100歌曲类型关系图</h1>
+<h1>评论时间段数统计图</h1>
 {% endblock %}
 
 {% block content_container %}
 <!-- 调整宽高去适应页面，这个大小正好适合我的电脑而已... -->
-<div id="main"  style="width: 960px;height:720px;"></div>
+<div id="main" style="width: 100%;height:600%;"></div>
 <script type="text/javascript">
     var dom = document.getElementById("main");
     var myChart = echarts.init(dom);
     myChart.showLoading();
-    $.get("{{ url_for('static', filename = 'songs.gexf') }}", function (xml) {
+    $.get('{{ url_for('static', filename = 'relaData.gexf') }}', function (xml) {
           myChart.hideLoading();
           var graph = echarts.dataTool.gexf.parse(xml);
           //图例
@@ -36,8 +37,8 @@
         
           graph.nodes.forEach(function (node) {
                 node.itemStyle = null;
-                node.value = node.symbolSize;
-                node.symbolSize /= 2
+                node.value = node.symbolSize * 10000;
+                node.symbolSize /= 2;
                 node.label = {
                     normal: {
                         show: node.symbolSize > 4
@@ -49,13 +50,15 @@
           option = {
         title: {
             text: 'By GQR',
-            subtext: 'Circular layout',
+            //subtext: 'By GQR',
             top: 'bottom',
             left: 'right'
         },
-        tooltip: {},
+        tooltip: [{}],
         legend: [{
-            
+                 //orient: 'vertical',
+                 //top: 'bottom',
+                 //left: 'left',
             // selectedMode: 'single',
             data: categories.map(function (a) {
                 return a.name;
