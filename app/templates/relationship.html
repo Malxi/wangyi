@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}网易云音乐数据分析{% endblock %}
+{% block title %}Welcome{% endblock %}
 
 {% block head %}
 {{ super() }}
@@ -11,12 +11,12 @@
 {% endblock %}
 
 {% block content_header %}
-<h1>热门歌曲类型关系图</h1>
+<h1>top100歌曲类型关系图</h1>
 {% endblock %}
 
 {% block content_container %}
 <!-- 调整宽高去适应页面，这个大小正好适合我的电脑而已... -->
-<div id="main" style="width: 100%;height:640px;"></div>
+<div id="main"  style="width: 960px;height:720px;"></div>
 <script type="text/javascript">
     var dom = document.getElementById("main");
     var myChart = echarts.init(dom);
@@ -26,59 +26,72 @@
           var graph = echarts.dataTool.gexf.parse(xml);
           //图例
           var categories = [];
+          var cat_list = ['摇滚', '甜美浪漫', '伤感深沉', '民谣', '舒缓抒情', '豪气', '回忆怀旧', '欢快', '强节奏', '丧乐']
+        
           for (var i = 0; i < 10; i++) {
                 categories[i] = {
-                    name: '系列' + i
+                    name: cat_list[i]
                 };
           }
+        
           graph.nodes.forEach(function (node) {
                 node.itemStyle = null;
                 node.value = node.symbolSize;
+                node.symbolSize /= 2
                 node.label = {
                     normal: {
-                        show: true//node.symbolSize > 30
+                        show: node.symbolSize > 4
                     }
                 };
                 node.category = node.attributes.modularity_class;
           });
+          
           option = {
-                title: {
-                    text: 'Les Miserables',
-                    subtext: 'Default layout',
-                    top: 'bottom',
-                    left: 'right'
+        title: {
+            text: 'By GQR',
+            subtext: 'Circular layout',
+            top: 'bottom',
+            left: 'right'
+        },
+        tooltip: {},
+        legend: [{
+            
+            // selectedMode: 'single',
+            data: categories.map(function (a) {
+                return a.name;
+            })
+        }],
+        animationDurationUpdate: 1500,
+        animationEasingUpdate: 'quinticInOut',
+        series : [
+            {
+                name: '歌曲：评论数',
+                type: 'graph',
+                layout: 'circular',
+                circular: {
+                    rotateLabel: true
                 },
-                legend: [{
-                    data: categories.map(function (a) {
-                        return a.name;
-                    })
-                }],
-                animationDuration: 1500,
-                animationEasingUpdate: 'quinticInOut',
-                series : [
-                    {
-                        name: 'Les Miserables',
-                        type: 'graph',
-                        layout: 'none',
-                        data: graph.nodes,
-                        links: graph.links,
-                        categories: categories,
-                        roam: true,
-                        label: {
-                            normal: {
-                                position: 'right',
-                                formatter: '{b}'
-                            }
-                        },
-                        lineStyle: {
-                            normal: {
-                                color: 'source',
-                                curveness: 0.3
-                            }
-                        }
+                data: graph.nodes,
+                links: graph.links,
+                categories: categories,
+                roam: true,
+                rotateLabel:true,
+                label: {
+                    normal: {
+                        position: 'right',
+                        formatter: '{b}'
                     }
-                ]
-          };
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'source',
+                        curveness: 0.3
+                    }
+                },
+                top:'middle'
+            }
+        ]
+    };
           myChart.setOption(option);
           }, 'xml');
 </script>
