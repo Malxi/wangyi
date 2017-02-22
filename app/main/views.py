@@ -10,20 +10,20 @@ import random
 import datetime
 
 
-@main.route('/rcmd')
-def rcmd_page():
-    topSongsList = mongo.db.sortData.find_one({'tableName' : 'topSongs'})['data']
-    data = random.sample(topSongsList, 24)
-    return render_template('rcmd.html', data = data)
+@main.route('/rela')
+def rela_page():
+    return render_template('relationship.html')
 
 @main.route('/')
 def home_page():
-    return render_template('relationship.html')    
+    topSongsList = mongo.db.sortData.find_one({'tableName' : 'topSongs'})['data']
+    data = random.sample(topSongsList, 24)
+    return render_template('rcmd.html', data = data) 
         
     
 @main.route('/sort/<value>')
 def sortSongs_page(value):
-    data = mongo.db.sortData.find_one({'tableName' : value})['data'][0:100]
+    data = mongo.db.sortData.find_one_or_404({'tableName' : value})['data'][0:100]
     if value == 'topComments':
         for comment in data:
             timeStamp = str(comment['time'])[0:10]
@@ -33,12 +33,12 @@ def sortSongs_page(value):
     
 @main.route('/data/<value>')
 def data_page(value):
-    cur = mongo.db.CommentsData.find_one({'id' : value})
-    return render_template( value + '.html', data = cur['data'])
+    chartData = mongo.db.chartData.find_one_or_404({'name' : value})['data']
+    return render_template( value + '.html', data = chartData)
 
 @main.route('/song/<id>')
-def comments_page(id):
-    song_data = mongo.db.sComments.find_one({'id' : id})
+def comments_page(id):  
+    song_data = mongo.db.sComments.find_one_or_404({'id' : id})
     for comment in song_data['hotComments']:
         timeStamp = str(comment['time'])[0:10]
         #print timeStamp
